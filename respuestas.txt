@@ -1,0 +1,27 @@
+
+a: array
+b: buffer
+c: cache
+d: debug
+e: ethernet
+f: firmware
+g: gateway
+h: hash
+i: inode
+j: json
+k: kernel
+l: login
+m: malloc
+n: node
+o: opcode
+p: python
+q: query
+r: risc
+s: socket
+t: token
+u: ubuntu
+v: virtual
+w: web
+x: xorg
+y: yaml
+z: zip
