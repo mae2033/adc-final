@@ -2,9 +2,6 @@
 .eqv long_juego 26
 
 .data
-tecla_actual: .word 0    # guarda la última tecla leída
-tecla_lista:  .word 0    # flag = 1 cuando hay tecla lista
-
 mensaje_g: .asciz "Ganaste!"
 mensaje_p: .asciz "Perdiste!"
 

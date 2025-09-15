@@ -9,13 +9,7 @@
 	.text
 .globl main
 
-
-
-main: 
-    # paso la rutina a la configuracion
-    configurar_interrupt_teclado isr_teclado
-
-    li s0, INICIO # arranca desde 0 | a
+main: li s0, INICIO # arranca desde 0 | a
 
 siguiente_letra:
     li s1, long_juego  
@@ -58,13 +52,11 @@ fin_contar:
     mostrar_intentos(s8)     # mostrar intentos iniciales
 
 leer_palabra:
-    beqz s6, comprobar          # ya completé la palabra
-    leer_tecla_i(s4)             # obtiene -1 si no hay tecla
-    li t0, -1
-    beq s4, t0, leer_palabra     # si no hay tecla, esperar sin descontar intento
-
+    beqz s6, comprobar # mientras sea 0 | no se presiona tecla
+    leer_tecla(s4)
     lb s7, 0(s5)
-    bne s4, s7, fallo_letra      # si no coincide -> fallo en letra
+    #bne s4, s7, fallo
+    bne s4, s7, fallo_letra # si no coincide -> fallo en letra
     addi s5, s5, 1
     addi s6, s6, -1
     j leer_palabra
@@ -95,27 +87,6 @@ fin:
 
 #   termina e imprime resultado
 salir: print_mmio s7
-	print_str "paso algo"
-	exit
-
-# 
-isr_teclado:
-    # Leer el dato del teclado
-    li t0, 0xFFFF0004     # KEY_DATA
-    lw t1, 0(t0)          # leer ASCII de la tecla
-
-    # Guardar en buffer
-    la t2, tecla_actual
-    sw t1, 0(t2)
-
-    # Setear flag (tecla lista)
-    li t3, 1
-    la t2, tecla_lista
-    sw t3, 0(t2)
-
-    # Volver de interrupción
-    uret
-
 
 # s0 indice del juego
 # s1 limite del juego
