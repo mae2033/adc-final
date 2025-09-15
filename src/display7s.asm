@@ -1,4 +1,4 @@
-
+# Modulo display de 7 segmentos
 .eqv DISPLAY 0xFFFF0
 .eqv IZQ 0x011
 .eqv DER 0x010

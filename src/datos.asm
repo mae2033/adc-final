@@ -74,3 +74,4 @@ claves:
 	.word clave_k, clave_l, clave_m, clave_n, clave_o, clave_p, clave_q, clave_r, clave_s, clave_t
 	.word clave_u, clave_v, clave_w, clave_x, clave_y, clave_z
 
+contador_tiempo: .word 0   # contador global
