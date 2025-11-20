@@ -1,21 +1,26 @@
+# -------------------------------
+# Incluir modulos de metodos
 	.include "display7s.asm" # incluye "funciones" para display de 7 segmentos
 	.include "mmio.asm" # incluye "funciones" de lectura y display mmio
 	.include "syscalls.asm"
-	 .include "timer.asm"
+	.include "timer.asm" # incluye el handler de timer
 	.include "datos.asm" # incluye las claves y pistas
-
+# -------------------------------
+# Constantes
 	.eqv INICIO 0 # valores posibles para probar del 0(a) al 25(z)
 	.eqv INTENTOS 5 # intentos por palabra, cant.errores aceptados de 0 a 9
 
 	.text
 .globl main
-
+# -------------------------------
+# 
 main: li s0, INICIO # arranca desde 0 | a
 
 siguiente_letra:
     li s1, long_juego  
     beq s0, s1, fin         # si s0==26 terminar juego
-
+# -------------------------------
+#
     # Cargar puntero a la pista y clave
     la t2, pistas
     slli s3, s0, 2
@@ -25,7 +30,8 @@ siguiente_letra:
     la t2, claves
     add t2, t2, s3
     lw s5, 0(t2)       
-
+# -------------------------------
+#
     # Mostrar letra en D7S
     la s6, letras		    # asignar letras
     add s6, s6, s0          # desplazar a la letra actual
@@ -34,7 +40,8 @@ siguiente_letra:
 
     # Mostrar pista en MMIO
     print_mmio s7
-
+# -------------------------------
+#
     # Calcular longitud de la clave
 	mv t0, s5         # t0 recorre la clave
 	li s6, 0          # s6 sera la longitud
@@ -45,7 +52,8 @@ contar_long:
     addi t0, t0, 1
     j contar_long
 fin_contar:
-
+# -------------------------------
+#
     li t0, 5                # 5 ticks por palabra
     la t1, contador_tiempo  # <- esta en datos.asm
     sw t0, 0(t1)
@@ -55,7 +63,8 @@ fin_contar:
     
     li s8, INTENTOS
     mostrar_intentos(s8)    # mostrar intentos iniciales
-
+# -------------------------------
+# 
 leer_palabra:
     beqz s6, comprobar      # mientras sea 0 | no se presiona tecla
     leer_tecla(s4)
@@ -75,7 +84,8 @@ fallo_letra:
 comprobar:
     addi s0, s0, 1
     j siguiente_letra
-
+# -------------------------------
+#
 fallo:
 	la s7 clear_code
 	print_mmio s7
@@ -87,20 +97,24 @@ fin:
 	print_mmio s7
 	la s7, mensaje_g
     j salir
-
-salir: print_mmio s7        # termina e imprime resultado
-
+# -------------------------------
+# Punto de salida seguro del programa
+salir: 
+    print_mmio s7        # termina e imprime resultado
+    exit                # faltaba, por eso el load access memory 
 # -------------------------------
 # Label real que apunta utvec
 handler_timer:
     manejador_timer
 
-# s0 indice del juego
-# s1 limite del juego
-# t2 referencia simbolica de clave y pista 
-# s3 desplazamiento
-# s4 puntero a la respuesta
-# s5 puntero a la clave
-# s6 letra clave | longitud clave
-# s7 puntero a la pista | mensaje G/P
-# s8 cantidad de intentos por palabra
+# -------------------------------
+# Uso que se le da a los registros:
+# - s0 indice del juego
+# - s1 limite del juego
+# - t2 referencia simbolica de clave y pista 
+# - s3 desplazamiento
+# - s4 puntero a la respuesta
+# - s5 puntero a la clave
+# - s6 letra clave | longitud clave
+# - s7 puntero a la pista | mensaje G/P
+# - s8 cantidad de intentos por palabra
